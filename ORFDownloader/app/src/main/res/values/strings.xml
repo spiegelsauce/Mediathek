@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ORF Downloader</string>
+    <string name="StationChooserTitle">Choose your radio station</string>
+    <string name="chosen_station">Showing results for %s</string>
+</resources>
