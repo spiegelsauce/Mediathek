@@ -15,15 +15,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 
 class ShowsViewModel @ViewModelInject constructor(
-    val selection: Selections,
-    val networkManager: NetworkManager,
-    @ApplicationContext val context: Context
+        val selection: Selections,
+        val networkManager: NetworkManager,
+        @ApplicationContext val context: Context
 ) : ViewModel() {
 
     val showDetails = MutableLiveData<Map<Int, List<ShowDetails>>>()
     val loading = MutableLiveData<Boolean>()
     val stationText =
-        context.getString(R.string.chosen_station).format(selection.station.humanFriendlyName)
+            context.getString(R.string.chosen_station).format(selection.station.humanFriendlyName)
 
     init {
         fetchAvailableShows()
@@ -41,24 +41,26 @@ class ShowsViewModel @ViewModelInject constructor(
         coroutineScope.launch(errorHandler) {
             val shows: HashMap<Int, ArrayList<ShowDetails>> = HashMap()
             networkManager.getStreams()
-                .forEach { item ->
-                    val showsList = ArrayList<ShowDetails>()
-                    item.broadcasts.forEach { bc ->
-                        showsList.add(
-                            ShowDetails(
-                                DateUtil.convertDate(item.day.toString(), rawShowDate, dayOfWeek),
-                                bc.programKey,
-                                DateUtil.getDate(
-                                    bc.scheduledISO
-                                ),
-                                bc.title,
-                                bc.subtitle.orEmpty(),
-                                bc.description.orEmpty()
-                            )
-                        )
+                    .forEach { item ->
+                        val showsList = ArrayList<ShowDetails>()
+                        item.broadcasts.forEach { bc ->
+                            if (bc.isBroadcasted) { //only add if this broadcast is available for playback TODO: show future shows but disable playback
+                                showsList.add(
+                                        ShowDetails(
+                                                DateUtil.convertDate(item.day.toString(), rawShowDate, dayOfWeek),
+                                                bc.programKey,
+                                                DateUtil.getDate(
+                                                        bc.scheduledISO
+                                                ),
+                                                bc.title,
+                                                bc.subtitle.orEmpty(),
+                                                bc.description.orEmpty()
+                                        )
+                                )
+                            }
+                        }
+                        shows[item.day] = showsList
                     }
-                    shows[item.day] = showsList
-                }
             showDetails.value = shows
             loading.value = false
         }

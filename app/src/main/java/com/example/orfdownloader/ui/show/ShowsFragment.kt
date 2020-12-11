@@ -9,14 +9,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.example.orfdownloader.R
 import com.example.orfdownloader.data.ShowDetails
-import com.example.orfdownloader.databinding.ShowsFragmentBinding
+import com.example.orfdownloader.databinding.ShowsFragmentV2Binding
 import com.example.orfdownloader.ui.player.PlayerFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ShowsFragment : Fragment() {
+
+    val v2 = true
 
     companion object {
         fun newInstance() = ShowsFragment()
@@ -24,15 +27,15 @@ class ShowsFragment : Fragment() {
 
     private val showsViewModel by viewModels<ShowsViewModel>()
 
-    private lateinit var binding: ShowsFragmentBinding
+    private lateinit var binding: ShowsFragmentV2Binding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.shows_fragment, container, false)
+                DataBindingUtil.inflate(inflater, R.layout.shows_fragment_v2, container, false)
         binding.viewmodel = showsViewModel
         binding.lifecycleOwner = this
 
@@ -41,15 +44,17 @@ class ShowsFragment : Fragment() {
 
             val days = shows.keys.toList().sorted()
 
-            binding.showsChooserRecyclerView.apply {
+            binding.showsList.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter =
-                    ShowsAdapter(
-                        { d: Int -> dayExpand(d) },
-                        { k: ShowDetails -> setShow(k) }).apply {
-                        setDays(days)
-                        addDetails(days[0], shows.getValue(days[0]))
-                    }
+                adapter = ShowTitlesAdapter { k: ShowDetails -> setShow(k) }
+            }
+
+            binding.daysScroller.apply {
+                layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
+                adapter = DaysAdapter { d: Int -> setDay(d) }.apply {
+                    daysOfShow = days.asReversed()
+                    setDay(daysOfShow[selectedPos])
+                }
             }
         }
 
@@ -58,19 +63,16 @@ class ShowsFragment : Fragment() {
         return binding.root
     }
 
-    private fun dayExpand(day: Int) {
-        (binding.showsChooserRecyclerView.adapter as ShowsAdapter).addDetails(
-            day,
-            showsViewModel.showDetails.value?.get(day).orEmpty()
-        )
+    private fun setDay(day: Int) {
+        (binding.showsList.adapter as ShowTitlesAdapter).titles = showsViewModel.showDetails.value?.get(day).orEmpty() as ArrayList<ShowDetails>
     }
 
     private fun setShow(show: ShowDetails) {
         showsViewModel.setShow(show)
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, PlayerFragment.newInstance())
-            .addToBackStack(null)
-            .commit()
+                .replace(R.id.fragment_container, PlayerFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
     }
 
 

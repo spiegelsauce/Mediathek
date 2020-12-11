@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/padding_small"
+    android:layout_margin="@dimen/padding_small"
+    app:cardCornerRadius="5dp">
+
+    <TextView
+        android:id="@+id/show_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/dayUnFocused"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textAppearance="@style/DayHeader"
+        tools:text ="THU\n12/10"/>
+
+</androidx.cardview.widget.CardView>

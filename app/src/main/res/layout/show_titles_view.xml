@@ -1,0 +1,20 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/padding_small"
+    android:layout_margin="@dimen/padding_small"
+    app:cardCornerRadius="5dp">
+
+    <TextView
+        android:id="@+id/show_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardBackground"
+        android:gravity="left"
+        android:padding="12dp"
+        android:textAppearance="@style/ShowTitle"
+        tools:text="10:00  You’re at home Baby" />
+
+</androidx.cardview.widget.CardView>
