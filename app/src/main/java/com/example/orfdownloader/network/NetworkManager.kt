@@ -5,21 +5,23 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 import javax.inject.Inject
 
-
-
 interface OrfApis {
     @GET
     suspend fun fetchStreams(@Url url : String): BroadcastArray
 
     @GET
-    suspend fun fetchStreamIds(@Url url: String): StreamURLResponseItem
+    suspend fun fetchBroadCastDetails(@Url url:String) : StreamURLResponseItemV2
 }
 
 class NetworkManager @Inject constructor(val selections: Selections, private val service: OrfApis) {
 
-    suspend fun getStreams() = service.fetchStreams("${selections.station.broadcastUrlKey}/json/2.0/broadcasts")
+    /**
+     * Get all the available Shows and Streams for a given Station
+     */
+    suspend fun getStreams() = service.fetchStreams("${selections.station.broadcastUrlKey}/json/4.0/broadcasts")
 
-    suspend fun getStreamIds() = service.fetchStreamIds("https://audioapi.orf.at/${selections.station.broadcastUrlKey}/json/2.0/playlist/${selections.show!!.programKey}${selections.show!!.dayOfWeekAffix}")
-
-
+    /**
+     * Get the details for a given Broadcast
+     */
+    suspend fun getBroadcastDetails(url: String) = service.fetchBroadCastDetails(url)
 }

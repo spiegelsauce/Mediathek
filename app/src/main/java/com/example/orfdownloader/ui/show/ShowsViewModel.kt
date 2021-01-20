@@ -6,24 +6,24 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.orfdownloader.R
+import com.example.orfdownloader.data.BroadcastState
 import com.example.orfdownloader.data.Selections
 import com.example.orfdownloader.data.ShowDetails
 import com.example.orfdownloader.network.NetworkManager
 import com.example.orfdownloader.util.DateUtil
-import com.example.orfdownloader.util.DateUtil.DateFormat.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 
 class ShowsViewModel @ViewModelInject constructor(
-        val selection: Selections,
-        val networkManager: NetworkManager,
-        @ApplicationContext val context: Context
+    val selection: Selections,
+    val networkManager: NetworkManager,
+    @ApplicationContext val context: Context
 ) : ViewModel() {
 
     val showDetails = MutableLiveData<Map<Int, List<ShowDetails>>>()
     val loading = MutableLiveData<Boolean>()
     val stationText =
-            context.getString(R.string.chosen_station).format(selection.station.humanFriendlyName)
+        context.getString(R.string.chosen_station).format(selection.station.humanFriendlyName)
 
     init {
         fetchAvailableShows()
@@ -41,26 +41,29 @@ class ShowsViewModel @ViewModelInject constructor(
         coroutineScope.launch(errorHandler) {
             val shows: HashMap<Int, ArrayList<ShowDetails>> = HashMap()
             networkManager.getStreams()
-                    .forEach { item ->
-                        val showsList = ArrayList<ShowDetails>()
-                        item.broadcasts.forEach { bc ->
-                            if (bc.isBroadcasted) { //only add if this broadcast is available for playback TODO: show future shows but disable playback
-                                showsList.add(
-                                        ShowDetails(
-                                                DateUtil.convertDate(item.day.toString(), rawShowDate, dayOfWeek),
-                                                bc.programKey,
-                                                DateUtil.getDate(
-                                                        bc.scheduledISO
-                                                ),
-                                                bc.title,
-                                                bc.subtitle.orEmpty(),
-                                                bc.description.orEmpty()
-                                        )
+                .forEach { item ->
+                    val showsList = ArrayList<ShowDetails>()
+                    item.broadcasts.forEach { bc ->
+                        if (bc.state == BroadcastState.C) { //only add if this broadcast is available for playback TODO: show future shows but disable playback
+                            showsList.add(
+                                ShowDetails(
+                                    bc.broadcastDay,
+                                    bc.programKey,
+                                    DateUtil.getDate(
+                                        bc.scheduledStartISO
+                                    ),
+                                    bc.title,
+                                    bc.subtitle.orEmpty(),
+                                    bc.description.orEmpty(),
+                                    bc.url
                                 )
-                            }
+                            )
                         }
+                    }
+                    if (showsList.isNotEmpty()) {
                         shows[item.day] = showsList
                     }
+                }
             showDetails.value = shows
             loading.value = false
         }

@@ -2,9 +2,7 @@ package com.example.orfdownloader.ui.player
 
 import android.text.Html
 import android.text.Spanned
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.orfdownloader.data.Selections
@@ -14,6 +12,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
+
+const val programImageKey = "imgprog"
 
 class PlayerViewModel @ViewModelInject constructor(
     private val selections: Selections,
@@ -24,12 +25,27 @@ class PlayerViewModel @ViewModelInject constructor(
     val subTitle: Spanned = formatHtml(selections.show?.showSubtitle.orEmpty())
     val description: Spanned = formatHtml(selections.show?.showDescription.orEmpty())
 
+    val showImageUrl = MutableLiveData<TreeMap<Int, String>>()
     val streamUri = MutableLiveData<String>()
+    val castDeviceConnected = MutableLiveData<Boolean>()
+    var streamDuration: Long = 0
 
     fun fetchStreams() {
+
         val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
         coroutineScope.launch {
-            val streamId = networkManager.getStreamIds().streams[0].loopStreamId
+
+            val response = networkManager.getBroadcastDetails(selections.show!!.showUrl)
+            val streamId = response.streams[0].loopStreamId
+            streamDuration = response.streams[0].run { end - start }
+
+            showImageUrl.value =
+                response.images?.firstOrNull()?.let{ image ->
+                    image.versions.associate {
+                    Pair(it.width, it.path)
+                }.toSortedMap() as TreeMap<Int, String>}
+
+
             streamUri.value = getStreamUrl(selections.station.loopStreamUrlKey, streamId)
         }
     }

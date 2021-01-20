@@ -27,6 +27,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
 
     compileOptions {
@@ -43,10 +44,13 @@ dependencies {
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
 
+    //Picasso Image Downloader
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
@@ -55,6 +59,10 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    //Google Cast
+    implementation 'androidx.mediarouter:mediarouter:1.2.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
     //RetroFit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
