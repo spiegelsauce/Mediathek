@@ -8,7 +8,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_settings"
         android:title="@string/exo_controls_settings_description"
         app:showAsAction="never" />
 </menu>
