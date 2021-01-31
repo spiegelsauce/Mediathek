@@ -13,7 +13,6 @@
         android:id="@+id/show_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/dayUnFocused"
         android:gravity="center"
         android:padding="12dp"
         android:textAppearance="@style/DayHeader"

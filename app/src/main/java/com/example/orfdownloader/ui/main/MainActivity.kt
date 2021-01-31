@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() , SessionManagerAdapter {
+class MainActivity : AppCompatActivity(), SessionManagerAdapter {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,15 +22,18 @@ class MainActivity : AppCompatActivity() , SessionManagerAdapter {
         CastContext.getSharedInstance(applicationContext)
 
         val binding = MainActivityBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
+
         setSupportActionBar(binding.myToolbar)
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.fragment_container, StationFragment.newInstance())
                 .commit()
         }
+
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.action_bar_menu, menu)

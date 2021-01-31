@@ -3,11 +3,11 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-
-    <color name="dayFocused">#FFE500</color>
-    <color name="dayUnFocused">#66DECC2F</color>
     
     <color name="background1">#626262</color>
     <color name="background2">#828282</color>
     <color name="cardBackground">#D0D0D0</color>
+
+
+
 </resources>

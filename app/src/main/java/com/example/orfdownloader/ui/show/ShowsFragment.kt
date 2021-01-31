@@ -11,19 +11,22 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import com.example.orfdownloader.R
+import com.example.orfdownloader.data.RadioStations
+import com.example.orfdownloader.data.Selections
 import com.example.orfdownloader.data.ShowDetails
 import com.example.orfdownloader.databinding.ShowsFragmentV2Binding
 import com.example.orfdownloader.ui.player.PlayerFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShowsFragment : Fragment() {
 
-    val v2 = true
-
     companion object {
         fun newInstance() = ShowsFragment()
     }
+
+    @Inject lateinit var selections: Selections
 
     private val showsViewModel by viewModels<ShowsViewModel>()
 
@@ -50,9 +53,10 @@ class ShowsFragment : Fragment() {
             }
 
             binding.daysScroller.apply {
-                layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
-                adapter = DaysAdapter { d: Int -> setDay(d) }.apply {
-                    daysOfShow = days.asReversed()
+                layoutManager = LinearLayoutManager(context, HORIZONTAL, false).apply { stackFromEnd = true }
+                adapter = DaysAdapter ({ d: Int -> setDay(d) }, selections.station).apply {
+                    daysOfShow = days
+                    selectedPos = days.lastIndex
                     setDay(daysOfShow[selectedPos])
                 }
             }
