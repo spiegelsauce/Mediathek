@@ -2,21 +2,21 @@ package com.example.orfdownloader.ui.player
 
 import android.text.Html
 import android.text.Spanned
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.orfdownloader.data.Selections
-import com.example.orfdownloader.data.getStreamUrl
+import com.example.orfdownloader.data.getStreamUrls
 import com.example.orfdownloader.network.NetworkManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-const val programImageKey = "imgprog"
-
-class PlayerViewModel @ViewModelInject constructor(
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
     private val selections: Selections,
     private val networkManager: NetworkManager
 ) : ViewModel() {
@@ -26,8 +26,9 @@ class PlayerViewModel @ViewModelInject constructor(
     val description: Spanned = formatHtml(selections.show?.showDescription.orEmpty())
 
     val showImageUrl = MutableLiveData<TreeMap<Int, String>>()
-    val streamUri = MutableLiveData<String>()
+    val streamUri = MutableLiveData<List<String>>()
     val castDeviceConnected = MutableLiveData<Boolean>()
+
     var streamDuration: Long = 0
 
     fun fetchStreams() {
@@ -36,20 +37,20 @@ class PlayerViewModel @ViewModelInject constructor(
         coroutineScope.launch {
 
             val response = networkManager.getBroadcastDetails(selections.show!!.showUrl)
-            val streamId = response.streams[0].loopStreamId
+            val streamIds = response.streams.map { it.loopStreamId }
             streamDuration = response.streams[0].run { end - start }
 
             showImageUrl.value =
-                response.images?.firstOrNull()?.let{ image ->
+                response.images?.firstOrNull()?.let { image ->
                     image.versions.associate {
-                    Pair(it.width, it.path)
-                }.toSortedMap() as TreeMap<Int, String>}
+                        Pair(it.width, it.path)
+                    }.toSortedMap() as TreeMap<Int, String>
+                }
 
-
-            streamUri.value = getStreamUrl(selections.station.loopStreamUrlKey, streamId)
+            streamUri.value = getStreamUrls(selections.station.loopStreamUrlKey, streamIds)
         }
     }
 
-    private fun formatHtml(text: String) = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
+private fun formatHtml(text: String) = Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT)
 
 }

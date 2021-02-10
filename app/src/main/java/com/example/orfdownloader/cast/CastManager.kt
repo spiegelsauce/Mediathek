@@ -2,9 +2,7 @@ package com.example.orfdownloader.cast
 
 import android.net.Uri
 import com.example.orfdownloader.data.Selections
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaLoadRequestData
-import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.SessionManager
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
@@ -19,7 +17,7 @@ class CastManager @Inject constructor(
 
     val castDeviceConnected get() = sessionManager.currentCastSession != null
 
-    fun castStream(uri: String, imageUri: String?, startPosition: Long = 0) {
+    fun castStream(uri: List<String>, imageUri: String?, startPosition: Long = 0) {
 
         val remoteMediaClient: RemoteMediaClient =
             sessionManager.currentCastSession?.remoteMediaClient
@@ -34,23 +32,36 @@ class CastManager @Inject constructor(
             imageUri?.let { addImage(WebImage(Uri.parse(it))) }
         }
 
-        val mediaInfo = MediaInfo.Builder(uri)
-            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType("audio/mpeg3")
-            .setMetadata(audioTrackMetaData)
-            .build()
+        val queueItems: List<MediaQueueItem> = uri.map {
+            val queueItem = MediaInfo.Builder(it)
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setContentType("audio/mpeg3")
+                .setMetadata(audioTrackMetaData)
+                .build()
+
+            MediaQueueItem.Builder(queueItem)
+                .setAutoplay(true)
+                .setPreloadTime(20.0)
+                .build()
+        }
+
 
         val requestData: MediaLoadRequestData =
             MediaLoadRequestData.Builder()
-                .setMediaInfo(mediaInfo)
-                .setQueueData(null)
+                .setQueueData(
+                    MediaQueueData.Builder().setItems(queueItems).build()
+                )
                 .setCurrentTime(startPosition)
                 .build()
 
         remoteMediaClient.load(requestData)
-
     }
 
     fun getCurrentPosition(): Long =
         sessionManager.currentCastSession?.remoteMediaClient?.approximateStreamPosition ?: 0
+
+    fun getCurrentQueueItem(): String? {
+        return sessionManager.currentCastSession.remoteMediaClient.currentItem.media.contentId
+    }
+
 }

@@ -80,8 +80,8 @@
             android:visibility="@{viewModel.castDeviceConnected ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:show_next_button="false"
-            app:show_previous_button="false"
+            app:show_next_button="true"
+            app:show_previous_button="true"
             app:show_timeout="0" />
 
 

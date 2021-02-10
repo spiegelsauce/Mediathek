@@ -1,6 +1,5 @@
 package com.example.orfdownloader.ui.player
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +27,7 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
 
     private lateinit var exoPlayer: ExoPlayer
 
-    private var streamUri: String = ""
+    private var streamUri: List<String> = ArrayList()
 
     @Inject
     lateinit var castManager: CastManager
@@ -58,16 +57,17 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
 
         binding.playerView.player = exoPlayer
 
-        val observer = Observer<String> { uri ->
+        val observer = Observer<List<String>> { uri ->
             streamUri = uri
             if (castManager.castDeviceConnected) {
                 castManager.castStream(
-                    streamUri,
+                    uri,
                     playerViewModel.showImageUrl.value?.ceilingEntry(500)?.value
                 )
             } else {
                 exoPlayer.run {
-                    setMediaItem(MediaItem.fromUri(uri))
+                    clearMediaItems()
+                    uri.forEach { addMediaItem(MediaItem.fromUri(it)) }
                     prepare()
                     play()
                 }
@@ -101,9 +101,10 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
     private fun castEnd() {
         playerViewModel.castDeviceConnected.value = false
         exoPlayer.run {
-            if (currentMediaItem?.playbackProperties?.uri != Uri.parse(streamUri)) {
-                setMediaItem(MediaItem.fromUri(streamUri))
+            if (currentMediaItem?.playbackProperties?.uri.toString() != castManager.getCurrentQueueItem()) {
+                streamUri.forEach { addMediaItem(MediaItem.fromUri(it)) }
             }
+
             seekTo(castManager.getCurrentPosition())
             prepare()
             play()

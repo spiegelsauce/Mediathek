@@ -3,4 +3,5 @@
     <string name="StationChooserTitle">Choose your radio station</string>
     <string name="chosen_station">Showing results for %s</string>
     <string name="media_route_menu_title">Cast to device</string>
+    <string name="show_description">%1$s \t %2$s</string>
 </resources>

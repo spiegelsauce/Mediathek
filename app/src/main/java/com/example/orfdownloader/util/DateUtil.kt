@@ -32,10 +32,10 @@ object DateUtil {
 
     enum class DateFormat(val pattern: String) {
         ISO("yyyy-MM-dd'T'HH:mm:ssX"),
-        rawShowDate("yyyyMMdd"),
-        niceShowDate("EEE'\n'MM/dd"),
-        niceTime("HH:mm"),
-        dayOfWeek("EEE")
+        RAWSHOWDATE("yyyyMMdd"),
+        NICESHOWDATE("EEE'\n'MM/dd"),
+        NICETIME("HH:mm"),
+        DAYOFWEEK("EEE")
     }
 
 

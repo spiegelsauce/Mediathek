@@ -43,8 +43,8 @@ class DaysAdapter(private val onDayClickListener: ((day: Int) -> Unit), private 
 
     override fun onBindViewHolder(holder: DaysViewHolder, position: Int) {
         val date =
-            DateUtil.getDate(daysOfShow[position].toString(), DateUtil.DateFormat.rawShowDate)
-        holder.itemView.show_day.text = DateUtil.convertDate(date, DateUtil.DateFormat.niceShowDate)
+            DateUtil.getDate(daysOfShow[position].toString(), DateUtil.DateFormat.RAWSHOWDATE)
+        holder.itemView.show_day.text = DateUtil.convertDate(date, DateUtil.DateFormat.NICESHOWDATE)
 
         holder.itemView.show_day.isSelected = position == selectedPos
 

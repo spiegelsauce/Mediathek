@@ -10,7 +10,7 @@ interface OrfApis {
     suspend fun fetchStreams(@Url url : String): BroadcastArray
 
     @GET
-    suspend fun fetchBroadCastDetails(@Url url:String) : StreamURLResponseItemV2
+    suspend fun fetchBroadCastDetails(@Url url:String) : StreamURLResponseItem
 }
 
 class NetworkManager @Inject constructor(val selections: Selections, private val service: OrfApis) {

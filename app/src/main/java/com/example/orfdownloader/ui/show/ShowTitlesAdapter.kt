@@ -29,9 +29,16 @@ class ShowTitlesAdapter(private val onDetailClickListener: (key: ShowDetails) ->
     }
 
     override fun onBindViewHolder(holder: ShowTitlesViewHolder, position: Int) {
-        val timeString = DateUtil.convertDate(titles[position].startTime, DateUtil.DateFormat.niceTime)
+        val timeString = DateUtil.convertDate(titles[position].startTime, DateUtil.DateFormat.NICETIME)
 
-        holder.itemView.show_title.text = "$timeString \t ${titles[position].showTitle}"
+        holder.itemView.let {
+            it.show_title.text =
+                it.context.getString(
+                    R.string.show_description,
+                    timeString,
+                    titles[position].showTitle
+                )
+        }
     }
 
     override fun getItemCount() = titles.size
