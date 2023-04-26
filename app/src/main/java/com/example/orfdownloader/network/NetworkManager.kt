@@ -17,6 +17,7 @@ class NetworkManager @Inject constructor(val selections: Selections, private val
 
     /**
      * Get all the available Shows and Streams for a given Station
+     * https://audioapi.orf.at/
      */
     suspend fun getStreams() = service.fetchStreams("${selections.station.broadcastUrlKey}/json/4.0/broadcasts")
 

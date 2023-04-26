@@ -77,6 +77,4 @@ class ShowsFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
     }
-
-
 }

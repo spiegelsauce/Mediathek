@@ -42,7 +42,7 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
         binding.viewModel = playerViewModel
         binding.lifecycleOwner = this
