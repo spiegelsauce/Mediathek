@@ -8,12 +8,10 @@ plugins {
 def compose_version = '1.4.2'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.example.orfdownloader"
         minSdkVersion 26
+        compileSdk 33
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
