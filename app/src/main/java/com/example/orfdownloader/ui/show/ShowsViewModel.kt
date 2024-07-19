@@ -59,7 +59,7 @@ class ShowsViewModel @Inject constructor(
                         shows[item.day] = showsList
                     }
                 }
-            showDetails.value = shows
+            showDetails.value = shows.toSortedMap()
             loading.value = false
         }
     }

@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.orfdownloader.R
 import com.example.orfdownloader.data.RadioStations
 import com.example.orfdownloader.data.Selections
-import com.example.orfdownloader.databinding.StationsFragmentBinding
 import com.example.orfdownloader.ui.show.ShowsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,23 +46,11 @@ class StationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: StationsFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.stations_fragment, container, false)
-
-        viewManager = LinearLayoutManager(this.context)
-
-        binding.stationChooserRecyclerview.apply {
-            setHasFixedSize(true)
-
-            // use a linear layout manager
-            layoutManager = viewManager
-
-            adapter = StationAdapter(
-                RadioStations.values()
-            ) { station -> onClick(station) }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                StationList(RadioStations.values().toList(), onClick = { onClick(it) })
+            }
         }
-
-        return binding.root
     }
 
     override fun onResume() {
