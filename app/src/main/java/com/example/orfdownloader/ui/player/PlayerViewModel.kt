@@ -29,7 +29,7 @@ class PlayerViewModel @Inject constructor(
     val streamUri = MutableLiveData<List<String>>()
     val castDeviceConnected = MutableLiveData<Boolean>()
 
-    var streamDuration: Long = 0
+    private var streamDuration: Long = 0
 
     fun fetchStreams() {
 

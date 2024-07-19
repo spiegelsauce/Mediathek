@@ -70,7 +70,7 @@
             </LinearLayout>
         </ScrollView>
 
-        <com.google.android.exoplayer2.ui.PlayerControlView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/player_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

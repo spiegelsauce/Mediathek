@@ -8,13 +8,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.orfdownloader.R
 import com.example.orfdownloader.cast.CastManager
 import com.example.orfdownloader.cast.SessionManagerAdapter
 import com.example.orfdownloader.databinding.PlayerFragmentBinding
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.gms.cast.framework.Session
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,7 +46,7 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
         binding.viewModel = playerViewModel
         binding.lifecycleOwner = this
 
-        exoPlayer = SimpleExoPlayer.Builder(requireContext())
+        exoPlayer = ExoPlayer.Builder(requireContext())
             .build()
 
         playerViewModel.castDeviceConnected.value = castManager.castDeviceConnected
@@ -101,7 +100,7 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
     private fun castEnd() {
         playerViewModel.castDeviceConnected.value = false
         exoPlayer.run {
-            if (currentMediaItem?.playbackProperties?.uri.toString() != castManager.getCurrentQueueItem()) {
+            if (currentMediaItem?.localConfiguration?.uri.toString() != castManager.getCurrentQueueItem()) {
                 streamUri.forEach { addMediaItem(MediaItem.fromUri(it)) }
             }
 
