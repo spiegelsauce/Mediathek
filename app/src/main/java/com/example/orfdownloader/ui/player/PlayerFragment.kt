@@ -4,16 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import com.example.orfdownloader.R
 import com.example.orfdownloader.cast.CastManager
 import com.example.orfdownloader.cast.SessionManagerAdapter
-import com.example.orfdownloader.databinding.PlayerFragmentBinding
 import com.google.android.gms.cast.framework.Session
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -35,51 +32,58 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
         fun newInstance() = PlayerFragment()
     }
 
-    private lateinit var binding: PlayerFragmentBinding
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-        binding.viewModel = playerViewModel
-        binding.lifecycleOwner = this
-
-        exoPlayer = ExoPlayer.Builder(requireContext())
-            .build()
-
-        playerViewModel.castDeviceConnected.value = castManager.castDeviceConnected
-        playerViewModel.fetchStreams()
-
-        castManager.sessionManager.addSessionManagerListener(this)
-
-        binding.playerView.player = exoPlayer
-
-        val observer = Observer<List<String>> { uri ->
-            streamUri = uri
-            if (castManager.castDeviceConnected) {
-                castManager.castStream(
-                    uri,
-                    playerViewModel.showImageUrl.value?.ceilingEntry(500)?.value
-                )
-            } else {
-                exoPlayer.run {
-                    clearMediaItems()
-                    uri.forEach { addMediaItem(MediaItem.fromUri(it)) }
-                    prepare()
-                    play()
-                }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MyPlayerView(playerViewModel)
             }
+
+//
+//
+//
+//        binding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
+//        binding.viewModel = playerViewModel
+//        binding.lifecycleOwner = this
+//this//
+//            exoPlayer = ExoPlayer.Builder(requireContext())
+//                .build()
+////
+//        playerViewModel.castDeviceConnected.value = castManager.castDeviceConnected
+//        playerViewModel.fetchStreams()
+//
+//        castManager.sessionManager.addSessionManagerListener(this)
+//
+//        binding.playerView.player = exoPlayer
+//
+//        val observer = Observer<List<String>> { uri ->
+//            streamUri = uri
+//            if (castManager.castDeviceConnected) {
+//                castManager.castStream(
+//                    uri,
+//                    playerViewModel.showImageUrl.value?.ceilingEntry(500)?.value
+//                )
+//            } else {
+//                exoPlayer.run {
+//                    clearMediaItems()
+//                    uri.forEach { addMediaItem(MediaItem.fromUri(it)) }
+//                    prepare()
+//                    play()
+//                }
+//            }
+//        }
+//
+//        playerViewModel.streamUri.observe(viewLifecycleOwner, observer)
+//
+//        return binding.root
         }
-
-        playerViewModel.streamUri.observe(viewLifecycleOwner, observer)
-
-        return binding.root
     }
 
     override fun onDestroyView() {
-        binding.playerView.player?.release()
+//        binding.playerView.playerViewΩyer?.release()
         super.onDestroyView()
     }
 
@@ -91,7 +95,7 @@ class PlayerFragment : Fragment(), SessionManagerAdapter {
         playerViewModel.castDeviceConnected.value = true
         castManager.castStream(
             streamUri,
-            playerViewModel.showImageUrl.value?.floorEntry(500)?.value,
+            playerViewModel.showImageUrl.value,
             exoPlayer.currentPosition
         )
         exoPlayer.stop()
